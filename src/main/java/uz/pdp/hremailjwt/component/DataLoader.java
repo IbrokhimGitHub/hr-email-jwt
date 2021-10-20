@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import uz.pdp.hremailjwt.config.MailSender;
 import uz.pdp.hremailjwt.entity.Employee;
 import uz.pdp.hremailjwt.entity.enums.RoleName;
 import uz.pdp.hremailjwt.repository.EmployeeRepository;
@@ -26,11 +27,12 @@ public class DataLoader implements CommandLineRunner {
     @Autowired
     EmployeeRepository employeeRepository;
 
-    @Autowired
-    AuthService authService;
 
     @Autowired
     PasswordEncoder passwordEncoder;
+
+    @Autowired
+    MailSender mailSender;
 
     @Value(value = "${spring.sql.init.mode}")
     private String initMode;
@@ -48,7 +50,7 @@ public class DataLoader implements CommandLineRunner {
                     Collections.singleton(roleRepository.findByRoleName(RoleName.DIRECTOR)));
             director.setEmailCode((UUID.randomUUID().toString()));
             employeeRepository.save(director);
-            if (authService.sendEmail(director.getEmail(),director.getEmailCode())) {
+            if (mailSender.sendEmailToVerify(director.getEmail(),director.getEmailCode())) {
                 System.out.println("email sent to director");
             }else {
                 System.out.println("email wasn't send to director");

@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -56,7 +57,9 @@ public class Employee implements UserDetails {
     @UpdateTimestamp
     private Timestamp updateAt;
 
-    @ManyToMany
+
+
+    @ManyToMany(fetch = FetchType.EAGER)
     private Set<Role> roles;
 
     private String emailCode;

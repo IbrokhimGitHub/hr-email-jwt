@@ -2,6 +2,6 @@ package uz.pdp.hremailjwt.entity.enums;
 
 public enum TaskStatus {
     NEW,
-    PERFORM,
+    IN_PROCESS,
     DONE;
 }

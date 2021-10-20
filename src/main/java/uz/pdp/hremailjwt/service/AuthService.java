@@ -16,6 +16,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import uz.pdp.hremailjwt.component.MostUsed;
+import uz.pdp.hremailjwt.config.MailSender;
 import uz.pdp.hremailjwt.entity.Employee;
 import uz.pdp.hremailjwt.entity.Role;
 import uz.pdp.hremailjwt.entity.enums.RoleName;
@@ -35,7 +36,7 @@ public class AuthService implements UserDetailsService {
     EmployeeRepository employeeRepository;
 
     @Autowired
-    JavaMailSender javaMailSender;
+    MailSender mailSender;
 
     @Autowired
     AuthenticationManager authenticationManager;
@@ -55,35 +56,34 @@ public class AuthService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
-//        Optional<Employee> optionalEmployee = employeeRepository.findByEmail(email);
-//        return optionalEmployee.orElseThrow(() -> new UsernameNotFoundException(email+" can't find user"));
-        return employeeRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException(email + " can not find"));
+        Optional<Employee> optionalEmployee = employeeRepository.findByEmail(email);
+        return optionalEmployee.orElseThrow(() -> new UsernameNotFoundException(email+" can't find user"));
+//        return employeeRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException(email + " can not find"));
 
     }
-    public Boolean sendEmail(String sendingEmail,String emailCode){
-        try {
-
-
-            SimpleMailMessage mailMessage = new SimpleMailMessage();
-            mailMessage.setFrom("Ibrokhim");
-            mailMessage.setTo(sendingEmail);
-            mailMessage.setSubject("Assalomu alaykum");
-
-//            "<form action=\"/api/auth/verifyEmail?emailCode="+emailCode+"&email=" +sendingEmail+"\">\n" +
+//    public Boolean sendEmail(String sendingEmail,String emailCode){
+//        try {
+//
+//
+//            SimpleMailMessage mailMessage = new SimpleMailMessage();
+//            mailMessage.setFrom("Ibrokhim");
+//            mailMessage.setTo(sendingEmail);
+//            mailMessage.setSubject("Assalomu alaykum");
+//
+////            "<form action=\"/api/auth/verifyEmail?emailCode="+emailCode+"&email=" +sendingEmail+"\">\n" +
+////                    "    <input type=\"text\" placeholder=\"type your password to login in platform\">\n" +
+////                    "    <button>submit</button>\n" +
+////                    "</form>"
+//            mailMessage.setText("<form action=\"http://localhost:8080/api/auth/verifyEmail?emailCode="+emailCode+"&email=" +sendingEmail+"\">\n" +
 //                    "    <input type=\"text\" placeholder=\"type your password to login in platform\">\n" +
 //                    "    <button>submit</button>\n" +
-//                    "</form>"
-            mailMessage.setText("<form action=\"http://localhost:8080/api/auth/verifyEmail?emailCode="+emailCode+"&email=" +sendingEmail+"\">\n" +
-                    "    <input type=\"text\" placeholder=\"type your password to login in platform\">\n" +
-                    "    <button>submit</button>\n" +
-                    "</form>");
-            http://localhost:8080/api/auth/verifyEmail?emailCode=0f37c314-ec6a-44e6-b6a2-01e7c08e584c&email=testforjavaspring@gmail.com
-            javaMailSender.send(mailMessage);
-            return true;
-        }catch (Exception e){
-            return false;
-        }
-    }
+//                    "</form>");
+//            javaMailSender.send(mailMessage);
+//            return true;
+//        }catch (Exception e){
+//            return false;
+//        }
+//    }
 
     public ApiResponse verifyEmail(String email, String emailCode) {
         Optional<Employee> optionalEmployee = employeeRepository.findByEmailAndEmailCode(email, emailCode);
@@ -107,9 +107,10 @@ public class AuthService implements UserDetailsService {
                     loginDto.getLogin(),
                     loginDto.getPassword()
             ));
-            Employee principal = mostUsed.getCurrentEmployee();
+            Employee principal1 = (Employee) authenticate.getPrincipal();
+//            Employee principal = mostUsed.getCurrentEmployee();
 
-            String token = jwtProvider.generateToken(loginDto.getLogin(), principal.getRoles());
+            String token = jwtProvider.generateToken(loginDto.getLogin(), principal1.getRoles());
             return new ApiResponse("Token", true, token);
         }catch (BadCredentialsException badCredentialsException){
             return new ApiResponse("USERNAME OR PASSWORD  IS MISTAKE",false);
@@ -160,7 +161,7 @@ public class AuthService implements UserDetailsService {
 //            user.setRoles(Collections.singleton(roleRepository.findByRoleName(RoleName.HR_MANAGER)));
 //        }
         user.setEmailCode(UUID.randomUUID().toString());
-        boolean isEmailSent=sendEmail(user.getEmail(),user.getEmailCode());
+        boolean isEmailSent=mailSender.sendEmailToVerify(user.getEmail(),user.getEmailCode());
         System.out.println("sdsds");
         if (isEmailSent) {
             employeeRepository.save(user);
