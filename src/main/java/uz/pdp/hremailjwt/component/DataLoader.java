@@ -61,7 +61,6 @@ public class DataLoader implements CommandLineRunner {
 
             SalaryAmount salaryAmount=new SalaryAmount();
             salaryAmount.setSalaryAmount(500000d);
-            salaryAmount.setEmployees(employeeRepository.findAll());
             salaryAmountRepository.save(salaryAmount);
             if (mailSender.sendEmailToVerify(director.getEmail(),director.getEmailCode())) {
                 System.out.println("email sent to director");
