@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import uz.pdp.hremailjwt.entity.Salary;
 import uz.pdp.hremailjwt.payload.ApiResponse;
 import uz.pdp.hremailjwt.payload.EmployeeSalaryDto;
+import uz.pdp.hremailjwt.payload.SalaryDto;
 import uz.pdp.hremailjwt.service.SalaryService;
 
 import javax.validation.constraints.Email;
@@ -24,8 +25,8 @@ public class SalaryController {
     @Autowired
     SalaryService salaryService;
     @PostMapping("/pay")
-    public HttpEntity<?> pay(@RequestBody  String emails, @RequestBody String monthName){
-       ApiResponse apiResponse= salaryService.paySalary(emails,monthName);
+    public HttpEntity<?> pay(@RequestBody SalaryDto salaryDto){
+       ApiResponse apiResponse= salaryService.paySalary(salaryDto);
 
        return ResponseEntity.status(apiResponse.isSuccess()?204:405).body(apiResponse);
     }

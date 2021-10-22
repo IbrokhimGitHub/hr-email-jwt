@@ -5,13 +5,14 @@ import org.springframework.stereotype.Service;
 import uz.pdp.hremailjwt.entity.Employee;
 import uz.pdp.hremailjwt.entity.MonthName;
 import uz.pdp.hremailjwt.entity.Salary;
-import uz.pdp.hremailjwt.entity.SalaryAmount;
+
 import uz.pdp.hremailjwt.entity.enums.MonthNameEnum;
 import uz.pdp.hremailjwt.payload.ApiResponse;
 import uz.pdp.hremailjwt.payload.EmployeeSalaryDto;
+import uz.pdp.hremailjwt.payload.SalaryDto;
 import uz.pdp.hremailjwt.repository.EmployeeRepository;
 import uz.pdp.hremailjwt.repository.MonthNameRepository;
-import uz.pdp.hremailjwt.repository.SalaryAmountRepository;
+
 import uz.pdp.hremailjwt.repository.SalaryRepository;
 
 import java.util.Collections;
@@ -31,29 +32,28 @@ public class SalaryService {
     @Autowired
     MonthNameRepository monthNameRepository;
 
-    @Autowired
-    SalaryAmountRepository salaryAmountRepository;
+
 
     public List<EmployeeSalaryDto>getByEmployee(){
 return null;
     }
-    public ApiResponse paySalary(String email,String monthNameStr){
-        Optional<Employee> optionalEmployee = employeeRepository.findByEmail(email);
-        Optional<MonthName> optionalMonthName = monthNameRepository.findByMonthName(MonthNameEnum.valueOf(monthNameStr));
+    public ApiResponse paySalary(SalaryDto salaryDto){
+        Optional<Employee> optionalEmployee = employeeRepository.findByEmail(salaryDto.getEmail());
+        Optional<MonthName> optionalMonthName = monthNameRepository.findByMonthName(MonthNameEnum.valueOf(salaryDto.getMonthName()));
         if (!optionalEmployee.isPresent()||!optionalMonthName.isPresent()) {
             return new ApiResponse("such employee or month name doesn't find",false);
         }
         Employee employee = optionalEmployee.get();
-        Optional<SalaryAmount> optionalSalaryAmount = salaryAmountRepository.findByEmployee(employee);
-        if (!optionalSalaryAmount.isPresent()) {
-            return new ApiResponse("such salary amount doesn't find",false);
-        }
+//        Optional<SalaryAmount> optionalSalaryAmount = salaryAmountRepository.findByEmployee(employee);
+//        if (!optionalSalaryAmount.isPresent()) {
+//            return new ApiResponse("such salary amount doesn't find",false);
+//        }
 
         Salary salary=new Salary();
         salary.setMonthName(optionalMonthName.get());
         salary.setEmployee(employee);
         salary.setGiven(true);
-        salary.setSalaryAmount(optionalSalaryAmount.get());
+        salary.setSalaryAmount(salaryDto.getSalaryAmount());
         salaryRepository.save(salary);
         return new ApiResponse("Salary for employee "+employee.getEmail()+" is set",true);
 

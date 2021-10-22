@@ -31,8 +31,8 @@ public class Salary {
     @Column(nullable = false)
     private boolean isGiven;
 
-    @ManyToOne
-    SalaryAmount salaryAmount;
+    @Column(nullable = false)
+    private Double salaryAmount;
 
 //    @Column(nullable = false)
 //    private Double amount;
