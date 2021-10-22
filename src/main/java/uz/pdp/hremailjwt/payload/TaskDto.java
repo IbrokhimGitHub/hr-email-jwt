@@ -23,7 +23,8 @@ public class TaskDto {
 
     private Timestamp deadline;
 
-  @Email
+    @Email
     private String responsibleEmployeeEmail;
-  private  String taskCode;
+    private String taskCode;
+    private String taskStatus;
 }

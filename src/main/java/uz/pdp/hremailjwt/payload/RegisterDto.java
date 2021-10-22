@@ -30,4 +30,7 @@ public class RegisterDto {
 
     @NotNull
     private String role;
+
+    @NotNull
+    private double salaryAmount;
 }

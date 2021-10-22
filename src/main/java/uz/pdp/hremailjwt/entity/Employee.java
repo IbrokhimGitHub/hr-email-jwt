@@ -8,6 +8,7 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import uz.pdp.hremailjwt.payload.EmployeeSalaryDto;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -21,6 +22,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+//@SqlResultSetMapping(        name = "EmployeeSalaryDto2")
 public class Employee implements UserDetails {
     public Employee(@Size(min = 3, max = 50) String firstName, @Size(min = 3, max = 50) String lastName, @Email String email, String password, Set<Role> roles) {
         this.firstName = firstName;
@@ -49,6 +51,8 @@ public class Employee implements UserDetails {
 
     @Column(nullable = false)
     private String password;
+
+
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)

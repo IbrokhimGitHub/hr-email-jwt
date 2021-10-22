@@ -19,6 +19,7 @@ import uz.pdp.hremailjwt.component.MostUsed;
 import uz.pdp.hremailjwt.config.MailSender;
 import uz.pdp.hremailjwt.entity.Employee;
 import uz.pdp.hremailjwt.entity.Role;
+import uz.pdp.hremailjwt.entity.enums.MonthNameEnum;
 import uz.pdp.hremailjwt.entity.enums.RoleName;
 import uz.pdp.hremailjwt.payload.ApiResponse;
 import uz.pdp.hremailjwt.payload.LoginDto;
@@ -58,32 +59,9 @@ public class AuthService implements UserDetailsService {
 
         Optional<Employee> optionalEmployee = employeeRepository.findByEmail(email);
         return optionalEmployee.orElseThrow(() -> new UsernameNotFoundException(email+" can't find user"));
-//        return employeeRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException(email + " can not find"));
 
     }
-//    public Boolean sendEmail(String sendingEmail,String emailCode){
-//        try {
-//
-//
-//            SimpleMailMessage mailMessage = new SimpleMailMessage();
-//            mailMessage.setFrom("Ibrokhim");
-//            mailMessage.setTo(sendingEmail);
-//            mailMessage.setSubject("Assalomu alaykum");
-//
-////            "<form action=\"/api/auth/verifyEmail?emailCode="+emailCode+"&email=" +sendingEmail+"\">\n" +
-////                    "    <input type=\"text\" placeholder=\"type your password to login in platform\">\n" +
-////                    "    <button>submit</button>\n" +
-////                    "</form>"
-//            mailMessage.setText("<form action=\"http://localhost:8080/api/auth/verifyEmail?emailCode="+emailCode+"&email=" +sendingEmail+"\">\n" +
-//                    "    <input type=\"text\" placeholder=\"type your password to login in platform\">\n" +
-//                    "    <button>submit</button>\n" +
-//                    "</form>");
-//            javaMailSender.send(mailMessage);
-//            return true;
-//        }catch (Exception e){
-//            return false;
-//        }
-//    }
+
 
     public ApiResponse verifyEmail(String email, String emailCode) {
         Optional<Employee> optionalEmployee = employeeRepository.findByEmailAndEmailCode(email, emailCode);
@@ -129,6 +107,7 @@ public class AuthService implements UserDetailsService {
         user.setFirstName(registerDto.getFirstName());
         user.setLastName(registerDto.getLastName());
         user.setEmail(registerDto.getEmail());
+//        user.setSalaryAmount(registerDto.getSalaryAmount());
         user.setPassword(passwordEncoder.encode(registerDto.getPassword()));
         String role=registerDto.getRole();
         Set<Role> currentEmployeeRoles = mostUsed.getCurrentEmployeeRole();
